@@ -21,8 +21,7 @@ const App = () => {
             path: "/callRoll",
             element: <div>点名</div>,
         }]);
-
-        return <RouterProvider router={router} />
+    return <RouterProvider router={router} />
 
 
 

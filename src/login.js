@@ -6,15 +6,19 @@ import { Typography } from '@douyinfe/semi-ui';
 import { Button } from '@douyinfe/semi-ui';
 import { useNavigate} from "react-router-dom";
 
+
+
 function Login() {
     const navigate = useNavigate()
+
     function isSucceed(){
         const login = new Promise((resolve, reject) => {
-            if (Math.random() < 0.5) {
+            if (Math.random() <= 0.5) {
                 resolve('成功')
             }
             else {
                 reject('失败')
+                setIsPrint(true)
             }
         })
         login
@@ -27,15 +31,20 @@ function Login() {
             .catch(error => {
                 console.log(error)
             })
+
+
     }
 
-    const { Title } = Typography;
+    const { Title, Text } = Typography;
+    const [isPrint, setIsPrint] = useState(false);
     const [inputValue, setInputValue] = useState();
     const [inputValue2, setInputValue2] = useState();
     const [isEmpty, setIsEmpty] = useState(false);
     useEffect(() => {
         setIsEmpty(!inputValue || !inputValue2)
     }, [inputValue, inputValue2]);
+
+
     return (
         <div className="App">
             <header className="App-header">
@@ -68,6 +77,8 @@ function Login() {
                     disabled={isEmpty}
                 >登录</Button>
                 <Title heading={ 6 } style={{ margin: '8px 0'}}>如果您还未注册账号请点击这里<a>注册</a></Title>
+
+                <Text type="danger">{ isPrint ? '登陆失败，请检查账户和密码' : ''}</Text>
             </header>
         </div>
     );
