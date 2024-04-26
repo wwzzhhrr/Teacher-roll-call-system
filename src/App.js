@@ -1,4 +1,6 @@
-import Login from './login';
+import Login from './Login/index';
+import CallRoll from './CallRoll/index';
+import Courses from './CoursesPage/index'
 import * as React from "react";
 
 import {
@@ -18,8 +20,12 @@ const App = () => {
             element: <Login />,
         },
         {
+            path: "Courses",
+            element: <Courses/>,
+        },
+        {
             path: "/callRoll",
-            element: <div>点名</div>,
+            element: <CallRoll/>,
         }]);
     return <RouterProvider router={router} />
 
