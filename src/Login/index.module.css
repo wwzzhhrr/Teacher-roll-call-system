@@ -1,10 +1,11 @@
 .Page{
-  padding: 180px 235px 180px 175px;
+  /*padding: 180px 235px 180px 175px;*/
   /*margin: 10vw 15vw;*/
 }
 .App{
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
+  padding: 0 235px 0 175px;
   align-items: center;
 
 
