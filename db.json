@@ -5,7 +5,7 @@
       "id": "f68d"
     },
     {
-      "name": "MATH101",
+      "name": "MATH1001",
       "id": "eba1"
     }
   ],
@@ -38,7 +38,7 @@
       "id": "4",
       "name": "付子豪",
       "points": -114514,
-      "isCall": false
+      "isCall": true
     },
     {
       "id": "5",
@@ -65,5 +65,5 @@
       "isCall": false
     }
   ],
-  "MATH101": []
+  "MATH1001": []
 }

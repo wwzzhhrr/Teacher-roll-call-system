@@ -28,7 +28,7 @@ function AddCourse() {
         navigate("/Login");
     };
     const enterCallRoll = (paramValue) => {
-        navigate(`/callRoll`)
+        navigate(`/callRoll`, { state: paramValue.name })
     }
     const addCourse = () =>{
         setVisible(true);

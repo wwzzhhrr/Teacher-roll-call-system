@@ -4,11 +4,12 @@ import axios from "axios";
 import useSWR from "swr";
 import styles from "../CoursesPage/index.module.css";
 import {IconArrowLeft, IconEdit} from "@douyinfe/semi-icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import _ from "lodash"
 import ListItem from "@douyinfe/semi-ui/lib/es/list/item";
 
-function Students({students, isGroup, changePointsButton}){
+
+function Students({students, isGroup, changePointsButton, course}){
     const style = {
         border: '1px solid var(--semi-color-border)',
         backgroundColor: 'var(--semi-color-bg-2)',
@@ -35,7 +36,7 @@ function Students({students, isGroup, changePointsButton}){
                             <div>
                                 <h3 style={{ color: 'var(--semi-color-text-0)', fontWeight: 500 }}>{ !isGroup && item.isCall ? '😇' : ''}{item.name}</h3>
                                 { changePointsButton ? <InputNumber defaultValue={item.points} onChange={num=>{
-                                    fetch(`http://localhost:4000/COMP3902/${item.id}`, {
+                                    fetch(`http://localhost:4000/${course}/${item.id}`, {
                                         method: 'PATCH',
                                         headers: {
                                             'Content-Type': 'application/json',
@@ -63,17 +64,19 @@ function Students({students, isGroup, changePointsButton}){
 
 
 function App(){
-
+    const location = useLocation();
+    const course = location.state;
     const [modalOpen, setModalOpen] = useState(false);
     const [randomStudent, setRandomStudent] = useState()
     const [randomStudentPoints, setRandomStudentPoints] = useState()
     const [numStudentsChoose, setNumStudentsChoose] = useState()
     const [studentsNotCall, setStudentsNotCall] = useState()
-    const [groupNum, setGroupNum] = useState(2)
+    const [groupNum, setGroupNum] = useState(2)  //小组人员数量
+    const [isShowGroup, setIsShowGroup] = useState(false)
     const [isActive, setIsActive] = useState(false); //鼠标悬停变色
     const [changePointsButton, setChangePointsButton] = useState(false) //控制是否修改数据
     const [groupOfStudents, setGroupOfStudents] = useState([])
-    const { data: students, error, isLoading, mutate } = useSWR("http://localhost:4000/COMP3902", url=>
+    const { data: students, error, isLoading, mutate } = useSWR(`http://localhost:4000/${course}`, url=>
         axios.get(url).then(res=>res.data))
     const navigate = useNavigate()
     const { Title, Text } = Typography;
@@ -81,7 +84,6 @@ function App(){
 
     function callName() {
         let numStudents = students.length;
-
         setModalOpen(true);
         mutate()
             .then(()=>{
@@ -90,11 +92,9 @@ function App(){
                 console.log(students[1])
 
                 while(students[randomNum]['isCall']){
-                    mutate()
-                    console.log('问题出现')
                     randomNum = Math.floor(Math.random() * numStudents);
                 }
-                fetch(`http://localhost:4000/COMP3902/${randomNum}`, {
+                fetch(`http://localhost:4000/${course}/${randomNum}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ function App(){
                 }
                 if (studentsNotCall === 1) {
                     for(let j = 0; j < numStudents; j++) {
-                        fetch(`http://localhost:4000/COMP3902/${j}`, {
+                        fetch(`http://localhost:4000/${course}/${j}`, {
                             method: 'PATCH',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -126,6 +126,7 @@ function App(){
 
     const handleMouseDown = () => {
         setIsActive(true);
+        console.log(course)
     };
 
     const handleMouseUp = () => {
@@ -141,7 +142,7 @@ function App(){
         setModalOpen(false);
         const selectedStudent = students[numStudentsChoose]
 
-        fetch(`http://localhost:4000/COMP3902/${numStudentsChoose}`, {
+        fetch(`http://localhost:4000/${course}/${numStudentsChoose}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -165,6 +166,7 @@ function App(){
         studentsArray = _.shuffle(studentsArray)
         studentsArray = _.chunk(studentsArray, groupNum)
         setGroupOfStudents(studentsArray)
+        setIsShowGroup(true)
     }
     const style = {
         border: '1px solid var(--semi-color-border)',
@@ -184,13 +186,14 @@ function App(){
                 setChangePointsButton(!changePointsButton)
                 mutate()}}
                     type="secondary"><IconEdit />{changePointsButton ? '确认分数': '修改分数'}</Button>
-            <Title style={{ margin: '8px 0' }} > 全栈开发 </Title>
+            <Title style={{ margin: '8px 0' }} > {course} </Title>
             <Tabs type="line">
                 <TabPane tab={'点名'} itemKey={'1'}>
                     <Students
                     students={students}
                     isGroup={false}
-                    changePointsButton={changePointsButton}/>
+                    changePointsButton={changePointsButton}
+                    course={course}/>
                     <Button theme='solid' type='primary' style={{ marginRight: 8 }} onClick={callName} disabled={changePointsButton}>随机点名</Button>
                     <Modal
                         title="幸运儿"
@@ -213,12 +216,13 @@ function App(){
                 <TabPane tab={'分组'} itemKey={'2'}>
                     <Students
                         students={students}
-                        isGroup={true}/>
+                        isGroup={true}
+                        course={course}/>
                     <Text>每组人数：</Text>
                     <InputNumber min={2} max={6} step={1} defaultValue={2} onChange={num=>{setGroupNum(num)}}/>
                     <Button theme='solid' type='primary' style={{marginRight: 8}} onClick={makeGroup}>随机分组</Button>
 
-                    <List
+                    {isShowGroup?<List
                         grid={{
                             gutter: 12,
                             span: 6,
@@ -237,7 +241,7 @@ function App(){
                             </List.Item>
                         )}
 
-                    />
+                    />:''}
                 </TabPane>
             </Tabs>
         </div>
