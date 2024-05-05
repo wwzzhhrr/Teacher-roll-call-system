@@ -1,7 +1,7 @@
 import { useNavigate} from "react-router-dom";
 import styles from './index.module.css';
 import React, { useState } from "react"
-import {Typography, Divider, Button, Input, List, InputNumber, Descriptions} from '@douyinfe/semi-ui';
+import {Typography, Divider, Modal, Button, Input, List, InputNumber, Descriptions} from '@douyinfe/semi-ui';
 import { IconArrowLeft } from '@douyinfe/semi-icons';
 import useSWR from "swr";
 import axios from "axios";
@@ -13,6 +13,9 @@ function AddCourse() {
     const { Title, Text } = Typography;
     const { data: students, error, isLoading, mutate } = useSWR("http://localhost:4000/CoursesList", url=>
         axios.get(url).then(res=>res.data))
+    const [visible, setVisible] = useState(false);  //modal是否可见
+    const [newName, setNewName] = useState();
+
     const handleMouseDown = () => {
         setIsActive(true);
     };
@@ -27,6 +30,30 @@ function AddCourse() {
     const enterCallRoll = (paramValue) => {
         navigate(`/callRoll`)
     }
+    const addCourse = () =>{
+        setVisible(true);
+    }
+    const handleOk = () => {
+        setVisible(false);
+        fetch('http://localhost:4000/CoursesList', {
+            method: 'POST', // 请求方法
+            headers: {
+                'Content-Type': 'application/json', // 设置内容类型
+            },
+            body: JSON.stringify({"name": newName}), // 将JavaScript对象转换为JSON字符串
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                mutate()
+            })
+    };
+    const handleCancel = () => {
+        setVisible(false);
+        console.log('Cancel button clicked');
+    };
+
     const style = {
         border: '1px solid var(--semi-color-border)',
         backgroundColor: 'var(--semi-color-bg-2)',
@@ -43,6 +70,18 @@ function AddCourse() {
                 onMouseEnter={handleMouseDown}
             />
             <Title heading={3} style={{ margin: '8px 0' }} >请选择您的课程</Title>
+            <Button onClick={addCourse}>+ 新建课程</Button>
+            <Modal
+                visible={visible}
+                title="新建课程"
+                motion={true}
+                okText="新建"
+                onCancel={handleCancel}
+                onOk={handleOk}
+                maskClosable={false}
+            >
+                <Input placeholder="课程名称" onChange={text=>{setNewName(text)}}></Input>
+            </Modal>
             <List
                 grid={{
                     gutter: 12,
