@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Tabs, TabPane, Spin, List, Descriptions, Button, Modal ,InputNumber } from '@douyinfe/semi-ui';
+import { Tabs, TabPane, Spin, List, Divider, Descriptions, Button, Modal ,InputNumber, Typography } from '@douyinfe/semi-ui';
 import axios from "axios";
 import useSWR from "swr";
 import styles from "../CoursesPage/index.module.css";
-import {IconArrowLeft} from "@douyinfe/semi-icons";
-import { useNavigate} from "react-router-dom";
+import {IconArrowLeft, IconEdit} from "@douyinfe/semi-icons";
+import { useNavigate } from "react-router-dom";
+import _ from "lodash"
+import ListItem from "@douyinfe/semi-ui/lib/es/list/item";
 
-function Students({students, isGroup}){
+function Students({students, isGroup, changePointsButton}){
     const style = {
         border: '1px solid var(--semi-color-border)',
         backgroundColor: 'var(--semi-color-bg-2)',
@@ -32,14 +34,22 @@ function Students({students, isGroup}){
                         <List.Item style={style}>
                             <div>
                                 <h3 style={{ color: 'var(--semi-color-text-0)', fontWeight: 500 }}>{ !isGroup && item.isCall ? '😇' : ''}{item.name}</h3>
-                                <Descriptions
+                                { changePointsButton ? <InputNumber defaultValue={item.points} onChange={num=>{
+                                    fetch(`http://localhost:4000/COMP3902/${item.id}`, {
+                                        method: 'PATCH',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({ points: num }), // 将 points 设置为一个数值
+                                    })}}/> :
+                                    <Descriptions
                                     align="center"
                                     size="small"
                                     row
                                     data={[
                                         {key: '分数', value: item.points}
                                     ]}
-                                />
+                                />}
                             </div>
                         </List.Item>
                     )}
@@ -59,10 +69,15 @@ function App(){
     const [randomStudentPoints, setRandomStudentPoints] = useState()
     const [numStudentsChoose, setNumStudentsChoose] = useState()
     const [studentsNotCall, setStudentsNotCall] = useState()
+    const [groupNum, setGroupNum] = useState(2)
     const [isActive, setIsActive] = useState(false); //鼠标悬停变色
-    const { data: students, error, isLoading, mutate } = useSWR("http://localhost:4000/students", url=>
+    const [changePointsButton, setChangePointsButton] = useState(false) //控制是否修改数据
+    const [groupOfStudents, setGroupOfStudents] = useState([])
+    const { data: students, error, isLoading, mutate } = useSWR("http://localhost:4000/COMP3902", url=>
         axios.get(url).then(res=>res.data))
     const navigate = useNavigate()
+    const { Title, Text } = Typography;
+
 
     function callName() {
         let numStudents = students.length;
@@ -79,7 +94,7 @@ function App(){
                     console.log('问题出现')
                     randomNum = Math.floor(Math.random() * numStudents);
                 }
-                fetch(`http://localhost:4000/students/${randomNum}`, {
+                fetch(`http://localhost:4000/COMP3902/${randomNum}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -97,7 +112,7 @@ function App(){
                 }
                 if (studentsNotCall === 1) {
                     for(let j = 0; j < numStudents; j++) {
-                        fetch(`http://localhost:4000/students/${j}`, {
+                        fetch(`http://localhost:4000/COMP3902/${j}`, {
                             method: 'PATCH',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -124,11 +139,9 @@ function App(){
 
     function changePoints() {
         setModalOpen(false);
-        console.log('1111')
         const selectedStudent = students[numStudentsChoose]
-        // console.log(changeScoreValue)
 
-        fetch(`http://localhost:4000/students/${numStudentsChoose}`, {
+        fetch(`http://localhost:4000/COMP3902/${numStudentsChoose}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -143,6 +156,22 @@ function App(){
         setModalOpen(false);
         mutate()
     }
+    function makeGroup(){
+        let studentsArray = []
+        for(let i of students){
+            studentsArray.push(i["name"])
+
+        }
+        studentsArray = _.shuffle(studentsArray)
+        studentsArray = _.chunk(studentsArray, groupNum)
+        setGroupOfStudents(studentsArray)
+    }
+    const style = {
+        border: '1px solid var(--semi-color-border)',
+        backgroundColor: 'var(--semi-color-bg-2)',
+        borderRadius: '3px',
+        paddingLeft: '20px',
+    };
     return (
         <div>
             <IconArrowLeft
@@ -151,12 +180,18 @@ function App(){
                 onMouseLeave={handleMouseUp}
                 onMouseEnter={handleMouseDown}
             />
+            <Button onClick={()=>{
+                setChangePointsButton(!changePointsButton)
+                mutate()}}
+                    type="secondary"><IconEdit />{changePointsButton ? '确认分数': '修改分数'}</Button>
+            <Title style={{ margin: '8px 0' }} > 全栈开发 </Title>
             <Tabs type="line">
                 <TabPane tab={'点名'} itemKey={'1'}>
                     <Students
                     students={students}
-                    isGroup={false}/>
-                    <Button theme='solid' type='primary' style={{ marginRight: 8 }} onClick={callName}>随机点名</Button>
+                    isGroup={false}
+                    changePointsButton={changePointsButton}/>
+                    <Button theme='solid' type='primary' style={{ marginRight: 8 }} onClick={callName} disabled={changePointsButton}>随机点名</Button>
                     <Modal
                         title="幸运儿"
                         visible={modalOpen}
@@ -177,8 +212,32 @@ function App(){
 
                 <TabPane tab={'分组'} itemKey={'2'}>
                     <Students
-                    students={students}
-                    isGroup={true}/>
+                        students={students}
+                        isGroup={true}/>
+                    <Text>每组人数：</Text>
+                    <InputNumber min={2} max={6} step={1} defaultValue={2} onChange={num=>{setGroupNum(num)}}/>
+                    <Button theme='solid' type='primary' style={{marginRight: 8}} onClick={makeGroup}>随机分组</Button>
+
+                    <List
+                        grid={{
+                            gutter: 12,
+                            span: 6,
+                        }}
+                        bordered
+                        dataSource={groupOfStudents}
+                        renderItem={item=>(
+                            <List.Item style={style}>
+                                <div>
+                                    <List
+                                        dataSource={item}
+                                        renderItem={item => (<List.Item>{item}</List.Item>)}
+                                    />
+                                    <Divider/>
+                                </div>
+                            </List.Item>
+                        )}
+
+                    />
                 </TabPane>
             </Tabs>
         </div>
