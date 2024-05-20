@@ -2,10 +2,11 @@ import { useNavigate} from "react-router-dom";
 import styles from './index.module.css';
 import React, { useState } from "react"
 import {Typography, Divider, Modal, Button, Input, List, InputNumber, Descriptions} from '@douyinfe/semi-ui';
-import { IconArrowLeft } from '@douyinfe/semi-icons';
+import { IconArrowLeft, IconDelete } from '@douyinfe/semi-icons';
 import useSWR from "swr";
 import axios from "axios";
-import callRoll from "../CallRoll";
+
+import callRoll from "../CallRoll/callRollTab";
 
 function AddCourse() {
     const navigate = useNavigate()
@@ -15,7 +16,8 @@ function AddCourse() {
         axios.get(url).then(res=>res.data))
     const [visible, setVisible] = useState(false);  //modal是否可见
     const [newName, setNewName] = useState();
-
+    const [deleteModal, setDeleteModal] = useState(false);
+    const [deleteName, setDeleteName] = useState();
     const handleMouseDown = () => {
         setIsActive(true);
     };
@@ -28,10 +30,15 @@ function AddCourse() {
         navigate("/Login");
     };
     const enterCallRoll = (paramValue) => {
-        navigate(`/callRoll`, { state: paramValue.name })
+        //navigate(`/callRoll/`, { state: [paramValue.id, paramValue.name] })
+        navigate(`/callRoll/${paramValue.name}`)
     }
     const addCourse = () =>{
         setVisible(true);
+    }
+    const deleteCourse = (item) =>{
+        setDeleteModal(true)
+        setDeleteName(item)
     }
     const handleOk = () => {
         setVisible(false);
@@ -51,9 +58,16 @@ function AddCourse() {
     };
     const handleCancel = () => {
         setVisible(false);
+        setDeleteModal(false);
         console.log('Cancel button clicked');
     };
-
+    const handleDelete = () =>{
+        fetch(`http://localhost:4000/CoursesList/${deleteName}`, {
+            method: 'DELETE',
+        })
+        setDeleteModal(false)
+        mutate()
+    }
     const style = {
         border: '1px solid var(--semi-color-border)',
         backgroundColor: 'var(--semi-color-bg-2)',
@@ -79,9 +93,21 @@ function AddCourse() {
                 onCancel={handleCancel}
                 onOk={handleOk}
                 maskClosable={false}
+                closeOnEsc={true}
+
             >
                 <Input placeholder="课程名称" onChange={text=>{setNewName(text)}}></Input>
             </Modal>
+            <Modal
+                visible={deleteModal}
+                title="删除课程"
+                motion={true}
+                okText="删除课程"
+                onCancel={handleCancel}
+                onOk={handleDelete}
+                maskClosable={false}
+                closeOnEsc={true}
+            >是否删除该课程</Modal>
             <List
                 grid={{
                     gutter: 12,
@@ -103,12 +129,13 @@ function AddCourse() {
                                     row
                                 />
                             <Button onClick={()=>{enterCallRoll(item)}}>进入课程</Button>
+                            <IconDelete onClick={()=>{deleteCourse(item.id)}} />
                         </div>
                     </List.Item>
                 )}
             />
         </div>
-    )
+   )
 }
 
 export default AddCourse;

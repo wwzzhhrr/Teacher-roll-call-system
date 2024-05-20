@@ -2,21 +2,28 @@ import styles from './index.module.css'
 import React, { useState, useEffect } from 'react';
 import { Typography, Divider, Button, Input } from '@douyinfe/semi-ui';
 import { useNavigate} from "react-router-dom";
-
+import http from '../http';
 
 
 function Login() {
     const navigate = useNavigate()
 
+    // useEffect(() => {
+    //     http.post('/teacher/' ,{
+    //         username: inputValue,
+    //         password: inputValue2}
+    //     ).then(res => localStorage.setItem('token', res.data.token));
+    // }, []);
+
     function isSucceed(){
         const login = new Promise((resolve, reject) => {
-            if (Math.random() <= 0.5) {
-                resolve('成功')
-            }
-            else {
-                reject('失败')
-                setIsPrint(true)
-            }
+
+            http.post('/teacher/login' ,{
+                username: inputValue,
+                password: inputValue2}
+            ).then(res => {
+                localStorage.setItem('token', res.data.token)
+                setIsPrint(true)})
         })
         login.then(value => {
             console.log(value)
@@ -27,8 +34,6 @@ function Login() {
             .catch(error => {
                 console.log(error)
             })
-
-
     }
 
     const { Title, Text } = Typography;

@@ -1,5 +1,4 @@
 import Login from './Login/index';
-import CallRoll from './CallRoll/index';
 import Courses from './CoursesPage/index'
 import * as React from "react";
 
@@ -7,16 +6,17 @@ import {
     createBrowserRouter,
     RouterProvider,
 } from "react-router-dom";
+import CallRoll from "./CallRoll/index";
 
 
 const App = () => {
     const router = createBrowserRouter([
         {
-            path: "/",
+            path: "",
             element: <div>Hello world！</div>,
         },
         {
-            path: "/login",
+            path: "login",
             element: <Login />,
         },
         {
@@ -24,7 +24,7 @@ const App = () => {
             element: <Courses/>,
         },
         {
-            path: "/callRoll",
+            path: "callRoll/:courseId",
             element: <CallRoll/>,
         }]);
     return <RouterProvider router={router} />
