@@ -26,7 +26,7 @@
       "id": "2",
       "name": "赵胤轩",
       "points": 11,
-      "isCall": true
+      "isCall": false
     },
     {
       "id": "3",
@@ -50,13 +50,13 @@
       "id": "6",
       "name": "高涵",
       "points": 10,
-      "isCall": false
+      "isCall": true
     },
     {
       "id": "7",
       "name": "王子元",
       "points": 8,
-      "isCall": false
+      "isCall": true
     },
     {
       "id": "8",

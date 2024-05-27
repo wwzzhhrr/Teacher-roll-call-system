@@ -51,6 +51,7 @@
     ]
   },
   "devDependencies": {
-    "json-server": "^1.0.0-alpha.23"
+    "json-server": "^1.0.0-alpha.23",
+    "prettier": "3.2.5"
   }
 }
