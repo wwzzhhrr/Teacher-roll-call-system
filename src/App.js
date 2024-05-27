@@ -1,7 +1,7 @@
 import Login from './Login/index';
 import Courses from './CoursesPage/index'
 import * as React from "react";
-
+import CourseDetails from './Course/index';
 import {
     createBrowserRouter,
     RouterProvider,
@@ -22,6 +22,10 @@ const App = () => {
         {
             path: "Courses",
             element: <Courses/>,
+        },
+        {
+            path: "CourseDetails/:courseId",
+            element: <CourseDetails />,
         },
         {
             path: "callRoll/:courseId",

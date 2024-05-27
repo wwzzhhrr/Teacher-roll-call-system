@@ -7,14 +7,6 @@ import http from '../http';
 
 function Login() {
     const navigate = useNavigate()
-
-    // useEffect(() => {
-    //     http.post('/teacher/' ,{
-    //         username: inputValue,
-    //         password: inputValue2}
-    //     ).then(res => localStorage.setItem('token', res.data.token));
-    // }, []);
-
     function isSucceed(){
         const login = new Promise((resolve, reject) => {
 
@@ -22,18 +14,13 @@ function Login() {
                 username: inputValue,
                 password: inputValue2}
             ).then(res => {
-                localStorage.setItem('token', res.data.token)
-                setIsPrint(true)})
+                if (res.status === 200) {
+                    localStorage.setItem('token', res.data.token)
+                    navigate("/Courses")
+                }
+                })
+                .catch(()=>setIsPrint(true))
         })
-        login.then(value => {
-            console.log(value)
-
-            navigate("/Courses")
-
-        })
-            .catch(error => {
-                console.log(error)
-            })
     }
 
     const { Title, Text } = Typography;

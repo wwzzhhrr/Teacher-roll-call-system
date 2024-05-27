@@ -66,7 +66,8 @@ export function CallRollTab({course, changePointsButton}) {
             students={students}
             isGroup={false}
             changePointsButton={changePointsButton}
-            course={course}/>
+            course={course}
+            isDelete={false}/>
         <Button theme='solid' type='primary' style={{marginRight: 8}} onClick={callName}
                 disabled={changePointsButton}>随机点名</Button>
         <Modal

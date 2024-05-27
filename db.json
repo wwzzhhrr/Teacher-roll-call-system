@@ -20,37 +20,37 @@
       "id": "1",
       "name": "王子浩然",
       "points": 5,
-      "isCall": true
+      "isCall": false
     },
     {
       "id": "2",
       "name": "赵胤轩",
-      "points": 10,
+      "points": 11,
       "isCall": true
     },
     {
       "id": "3",
       "name": "曾奕洲",
       "points": 9,
-      "isCall": true
+      "isCall": false
     },
     {
       "id": "4",
       "name": "付子豪",
       "points": 114515,
-      "isCall": true
+      "isCall": false
     },
     {
       "id": "5",
       "name": "段啸俣",
       "points": 7,
-      "isCall": true
+      "isCall": false
     },
     {
       "id": "6",
       "name": "高涵",
       "points": 10,
-      "isCall": true
+      "isCall": false
     },
     {
       "id": "7",
@@ -62,7 +62,7 @@
       "id": "8",
       "name": "吴廷潇",
       "points": 8,
-      "isCall": true
+      "isCall": false
     }
   ],
   "MATH1001": []

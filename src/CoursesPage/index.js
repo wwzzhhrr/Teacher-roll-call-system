@@ -2,36 +2,28 @@ import { useNavigate} from "react-router-dom";
 import styles from './index.module.css';
 import React, { useState } from "react"
 import {Typography, Divider, Modal, Button, Input, List, InputNumber, Descriptions} from '@douyinfe/semi-ui';
-import { IconArrowLeft, IconDelete } from '@douyinfe/semi-icons';
+import { IconDelete } from '@douyinfe/semi-icons';
 import useSWR from "swr";
 import axios from "axios";
-
+import { LeaveIcon as Leave } from "../atoms/index";
 import callRoll from "../CallRoll/callRollTab";
+import http from '../http';
 
 function AddCourse() {
     const navigate = useNavigate()
-    const [isActive, setIsActive] = useState(false); // 新增状态来控制样式
     const { Title, Text } = Typography;
     const { data: students, error, isLoading, mutate } = useSWR("http://localhost:4000/CoursesList", url=>
         axios.get(url).then(res=>res.data))
+    const [courses, setCourses] = useState()
+    http.get(`/course`).then(res=>setCourses(res.data))
+
+
     const [visible, setVisible] = useState(false);  //modal是否可见
     const [newName, setNewName] = useState();
     const [deleteModal, setDeleteModal] = useState(false);
     const [deleteName, setDeleteName] = useState();
-    const handleMouseDown = () => {
-        setIsActive(true);
-    };
-
-    const handleMouseUp = () => {
-        setIsActive(false);
-    };
-
-    const handleClick = () => {
-        navigate("/Login");
-    };
     const enterCallRoll = (paramValue) => {
-        //navigate(`/callRoll/`, { state: [paramValue.id, paramValue.name] })
-        navigate(`/callRoll/${paramValue.name}`)
+        navigate(`/CourseDetails/${paramValue.name}`)
     }
     const addCourse = () =>{
         setVisible(true);
@@ -44,9 +36,6 @@ function AddCourse() {
         setVisible(false);
         fetch('http://localhost:4000/CoursesList', {
             method: 'POST', // 请求方法
-            headers: {
-                'Content-Type': 'application/json', // 设置内容类型
-            },
             body: JSON.stringify({"name": newName}), // 将JavaScript对象转换为JSON字符串
         })
             .then(response => {
@@ -77,12 +66,7 @@ function AddCourse() {
     };
     return(
         <div>
-            <IconArrowLeft
-                className={`${styles.arrowIcon} ${isActive ? styles.active : ''}`}
-                onClick={()=>{handleClick()}}
-                onMouseLeave={handleMouseUp}
-                onMouseEnter={handleMouseDown}
-            />
+            <Leave path={"/Login"}/>
             <Title heading={3} style={{ margin: '8px 0' }} >请选择您的课程</Title>
             <Button onClick={addCourse}>+ 新建课程</Button>
             <Modal
@@ -94,7 +78,6 @@ function AddCourse() {
                 onOk={handleOk}
                 maskClosable={false}
                 closeOnEsc={true}
-
             >
                 <Input placeholder="课程名称" onChange={text=>{setNewName(text)}}></Input>
             </Modal>

@@ -1,7 +1,9 @@
 import {Descriptions, InputNumber, List, Spin} from "@douyinfe/semi-ui";
 import React from "react";
+import { IconDelete } from '@douyinfe/semi-icons';
 
-export function Students({students, isGroup, changePointsButton, course}) {
+
+export function Students({students, isGroup, changePointsButton, course, isDelete}) {
     const style = {
         border: '1px solid var(--semi-color-border)',
         backgroundColor: 'var(--semi-color-bg-2)',
@@ -29,7 +31,7 @@ export function Students({students, isGroup, changePointsButton, course}) {
                                 <h3 style={{
                                     color: 'var(--semi-color-text-0)',
                                     fontWeight: 500
-                                }}>{!isGroup && item.isCall ? '😇' : ''}{item.name}</h3>
+                                }}>{!isGroup && item.isCall ? '😇' : ''}{item.name}{isDelete?<IconDelete/>:""}</h3>
                                 {changePointsButton ? <InputNumber defaultValue={item.points} onChange={num => {
                                         fetch(`http://localhost:4000/${course}/${item.id}`, {
                                             method: 'PATCH',
