@@ -13,50 +13,50 @@
     {
       "id": "0",
       "name": "张恩淇",
-      "points": 10,
-      "isCall": true
+      "points": 11,
+      "isCall": false
     },
     {
       "id": "1",
       "name": "王子浩然",
-      "points": 5,
+      "points": 7,
       "isCall": false
     },
     {
       "id": "2",
       "name": "赵胤轩",
-      "points": 11,
+      "points": 13,
       "isCall": false
     },
     {
       "id": "3",
       "name": "曾奕洲",
-      "points": 9,
+      "points": 10,
       "isCall": false
     },
     {
       "id": "4",
       "name": "付子豪",
-      "points": 114515,
+      "points": 114516,
       "isCall": false
     },
     {
       "id": "5",
       "name": "段啸俣",
-      "points": 7,
+      "points": 9,
       "isCall": false
     },
     {
       "id": "6",
       "name": "高涵",
-      "points": 10,
-      "isCall": true
+      "points": 11,
+      "isCall": false
     },
     {
       "id": "7",
       "name": "王子元",
-      "points": 8,
-      "isCall": true
+      "points": 9,
+      "isCall": false
     },
     {
       "id": "8",
