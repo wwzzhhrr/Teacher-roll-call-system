@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useSWR from 'swr';
 import { Button, Card, InputNumber, List, Typography } from '@douyinfe/semi-ui';
 import _ from 'lodash';
 import styles from './index.module.css';
 import { Students } from './components';
+import http from '../http';
 
 export function MakeGroupTab({ course, changePointsButton }) {
   const [groupNum, setGroupNum] = useState(2); //小组人员数量
   const [isShowGroup, setIsShowGroup] = useState(false);
   const [groupOfStudents, setGroupOfStudents] = useState([]);
+  const [studentBackEnd, setStudentBackEnd] = useState();
+
   const [cardColor, setCardColor] = useState([
     'blue',
     'red',
@@ -30,6 +33,28 @@ export function MakeGroupTab({ course, changePointsButton }) {
   const { data: students } = useSWR(`http://localhost:4000/${course}`);
   const { Text, Title } = Typography;
 
+  async function getStudent() {
+    try {
+      const student = await http.get(
+        `http://localhost:5050/student/studentCourse/${course}`,
+      );
+      console.log(student.data);
+      return student.data;
+    } catch (error) {
+      console.error('Error fetching student course:', error);
+      throw error;
+    }
+  }
+
+  useEffect(() => {
+    getStudent()
+      .then(student => {
+        setStudentBackEnd(student);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }, []);
   function makeGroup() {
     setCardColor(_.shuffle(cardColor));
     let studentsArray = [];
@@ -49,7 +74,7 @@ export function MakeGroupTab({ course, changePointsButton }) {
   return (
     <div>
       <Students
-        students={students}
+        students={studentBackEnd}
         isGroup={true}
         changePointsButton={changePointsButton}
         course={course}

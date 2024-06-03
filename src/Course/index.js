@@ -37,10 +37,20 @@ function Course() {
   const [studentBackEnd, setStudentBackEnd] = useState();
 
   const navigate = useNavigate();
+  const status = {
+    1: '迟到',
+    2: '请假',
+    3: '缺勤',
+  };
+  const session = {
+    1: '上午',
+    2: '下午',
+  };
   const { data: students, mutate } = useSWR(
     `http://localhost:4000/${course}`,
     url => axios.get(url).then(res => res.data),
   );
+
   async function getStudent() {
     try {
       const student = await http.get(
@@ -62,6 +72,7 @@ function Course() {
       .catch(error => {
         console.error('Error:', error);
       });
+    http.get();
   }, []);
 
   const change = () => {
@@ -73,6 +84,10 @@ function Course() {
   };
   const handleOk = () => {
     setIsAttendance(false);
+  };
+  const addStudent = () => {
+    setIsAdd(false);
+    http.post(`/student/addStudents/${course}`, { name: newStudent });
   };
   const changeState = (e, name) => {
     // console.log(name, e);
@@ -124,10 +139,7 @@ function Course() {
         motion={true}
         okText="添加"
         onCancel={() => setIsAdd(false)}
-        onOk={() => {
-          console.log(newStudent);
-          setIsAdd(false);
-        }}
+        onOk={() => addStudent()}
         maskClosable={false}
         closeOnEsc={true}
       >
@@ -197,7 +209,7 @@ function Course() {
           <IconFile />
           添加考勤
         </Button>
-        <AttendanceList />
+        <AttendanceList courseId={course} status={status} session={session} />
       </SideSheet>
 
       <SideSheet
@@ -206,7 +218,7 @@ function Course() {
         onCancel={change}
         size={'large'}
       >
-        <PointsTable />
+        <PointsTable courseId={course} />
       </SideSheet>
     </>
   );

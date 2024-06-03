@@ -8,27 +8,17 @@ import {
   Button,
   Input,
   List,
-  InputNumber,
   Descriptions,
 } from '@douyinfe/semi-ui';
 import { IconDelete } from '@douyinfe/semi-icons';
 import useSWR from 'swr';
 import axios from 'axios';
 import { LeaveIcon as Leave } from '../atoms/index';
-import callRoll from '../CallRoll/callRollTab';
 import http from '../http';
 
 function AddCourse() {
   const navigate = useNavigate();
   const { Title, Text } = Typography;
-  const {
-    data: students,
-    error,
-    isLoading,
-    mutate,
-  } = useSWR('http://localhost:4000/CoursesList', url =>
-    axios.get(url).then(res => res.data),
-  );
   const [courses, setCourses] = useState();
   useEffect(() => {
     http.get(`/course`).then(res => setCourses(res.data));
@@ -37,19 +27,20 @@ function AddCourse() {
   const [visible, setVisible] = useState(false); //modal是否可见
   const [newName, setNewName] = useState();
   const [deleteModal, setDeleteModal] = useState(false);
-  const [deleteName, setDeleteName] = useState();
-  const enterCallRoll = paramValue => {
+  const [deleteId, setDeleteId] = useState();
+  const enterCourse = paramValue => {
+    http.post(`/class/${paramValue}`, { timestamp: Date.now() });
     navigate(`/CourseDetails/${paramValue}`);
   };
   const addCourse = () => {
-    console.log(courses);
     setVisible(true);
   };
   const deleteCourse = item => {
     setDeleteModal(true);
-    setDeleteName(item);
+    setDeleteId(item);
   };
   const handleOk = () => {
+    //新建课程
     setVisible(false);
     fetch('http://localhost:4000/CoursesList', {
       method: 'POST', // 请求方法
@@ -58,8 +49,10 @@ function AddCourse() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      mutate();
     });
+    http
+      .post('/course/addCourse', { name: newName })
+      .then(() => navigate('/Courses'));
   };
   const handleCancel = () => {
     setVisible(false);
@@ -67,11 +60,11 @@ function AddCourse() {
     console.log('Cancel button clicked');
   };
   const handleDelete = () => {
-    fetch(`http://localhost:4000/CoursesList/${deleteName}`, {
+    console.log(deleteId);
+    fetch(`http://localhost:4000/CoursesList/${deleteId}`, {
       method: 'DELETE',
     });
     setDeleteModal(false);
-    mutate();
   };
   const style = {
     border: '1px solid var(--semi-color-border)',
@@ -139,7 +132,7 @@ function AddCourse() {
               <Descriptions align="center" size="small" row />
               <Button
                 onClick={() => {
-                  enterCallRoll(item.id);
+                  enterCourse(item.id);
                 }}
               >
                 进入课程

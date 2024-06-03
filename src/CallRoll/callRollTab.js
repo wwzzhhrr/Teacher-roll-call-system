@@ -40,7 +40,7 @@ export function CallRollTab({ course, changePointsButton }) {
   }, []);
 
   function callName() {
-    let numStudents = students.length;
+    let numStudents = studentBackEnd.length;
     setModalOpen(true);
     mutate().then(() => {
       let randomNum = Math.floor(Math.random() * numStudents);
