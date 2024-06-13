@@ -1,3 +1,39 @@
 .active{
     color: #0064f8;
 }
+.logo{
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    z-index: -999;
+}
+.topTab{
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+
+.add{
+    margin-top: 10px;
+    border-radius: 5px;
+    background: rgba(var(--semi-grey-1), 0.5);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1)
+}
+.enter{
+    border-radius: 5px;
+    background: rgba(var(--semi-grey-1), 0.5);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1)
+}
+.enterTab{
+    display: flex;
+}
+.delete{
+    margin: 10px;
+}
+.courseList{
+    border-radius: 10px;
+    margin: 8px 2px;
+    background: rgba(var(--semi-grey-1), 0.15);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(3px);
+}

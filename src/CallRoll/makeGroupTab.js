@@ -6,11 +6,16 @@ import styles from './index.module.css';
 import { Students } from './components';
 import http from '../http';
 
-export function MakeGroupTab({ course, changePointsButton }) {
+export function MakeGroupTab({
+  course,
+  classId,
+  changePointsButton,
+  studentBackEnd,
+  score,
+}) {
   const [groupNum, setGroupNum] = useState(2); //小组人员数量
   const [isShowGroup, setIsShowGroup] = useState(false);
   const [groupOfStudents, setGroupOfStudents] = useState([]);
-  const [studentBackEnd, setStudentBackEnd] = useState();
 
   const [cardColor, setCardColor] = useState([
     'blue',
@@ -33,33 +38,13 @@ export function MakeGroupTab({ course, changePointsButton }) {
   const { data: students } = useSWR(`http://localhost:4000/${course}`);
   const { Text, Title } = Typography;
 
-  async function getStudent() {
-    try {
-      const student = await http.get(
-        `http://localhost:5050/student/studentCourse/${course}`,
-      );
-      console.log(student.data);
-      return student.data;
-    } catch (error) {
-      console.error('Error fetching student course:', error);
-      throw error;
-    }
-  }
-
-  useEffect(() => {
-    getStudent()
-      .then(student => {
-        setStudentBackEnd(student);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-  }, []);
   function makeGroup() {
     setCardColor(_.shuffle(cardColor));
     let studentsArray = [];
-    for (let i of students) {
-      studentsArray.push(i['name']);
+    for (let i of studentBackEnd) {
+      if (i.is_come) {
+        studentsArray.push(i['name']);
+      }
     }
     studentsArray = _.shuffle(studentsArray);
     studentsArray = _.chunk(studentsArray, groupNum);
@@ -78,6 +63,9 @@ export function MakeGroupTab({ course, changePointsButton }) {
         isGroup={true}
         changePointsButton={changePointsButton}
         course={course}
+        classId={classId}
+        studentBackEnd={studentBackEnd}
+        score={score}
       />
       <div className={styles.makeGroup}>
         <div
@@ -99,15 +87,15 @@ export function MakeGroupTab({ course, changePointsButton }) {
           />
         </div>
         <Button
-          theme="solid"
-          type="primary"
+          size="large"
           style={{ marginRight: 8 }}
           onClick={makeGroup}
+          className={styles.callButton}
         >
           随机分组
         </Button>
       </div>
-      <Title>分组结果</Title>
+      <Title className={styles.result}>分组结果</Title>
       {isShowGroup ? (
         <List
           type="flex"
@@ -126,6 +114,7 @@ export function MakeGroupTab({ course, changePointsButton }) {
                   borderRadius: '12px',
                 }}
                 headerStyle={{
+                  border: 'none',
                   backgroundColor: `rgba(var(--semi-${cardColor[groupOfStudents.indexOf(item)]}-4), 0.65)`,
                 }}
                 header={

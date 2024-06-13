@@ -3,7 +3,6 @@ import styles from './index.module.css';
 import React, { useEffect, useState } from 'react';
 import {
   Typography,
-  Divider,
   Modal,
   Button,
   Input,
@@ -11,8 +10,6 @@ import {
   Descriptions,
 } from '@douyinfe/semi-ui';
 import { IconDelete } from '@douyinfe/semi-icons';
-import useSWR from 'swr';
-import axios from 'axios';
 import { LeaveIcon as Leave } from '../atoms/index';
 import http from '../http';
 
@@ -29,8 +26,9 @@ function AddCourse() {
   const [deleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState();
   const enterCourse = paramValue => {
-    http.post(`/class/${paramValue}`, { timestamp: Date.now() });
-    navigate(`/CourseDetails/${paramValue}`);
+    http
+      .post(`/class/${paramValue}`, { timestamp: Date.now() })
+      .then(res => navigate(`/CourseDetails/${paramValue}/${res.data.id}`));
   };
   const addCourse = () => {
     setVisible(true);
@@ -40,19 +38,10 @@ function AddCourse() {
     setDeleteId(item);
   };
   const handleOk = () => {
-    //新建课程
     setVisible(false);
-    fetch('http://localhost:4000/CoursesList', {
-      method: 'POST', // 请求方法
-      body: JSON.stringify({ name: newName }), // 将JavaScript对象转换为JSON字符串
-    }).then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-    });
     http
       .post('/course/addCourse', { name: newName })
-      .then(() => navigate('/Courses'));
+      .then(() => location.reload());
   };
   const handleCancel = () => {
     setVisible(false);
@@ -61,25 +50,20 @@ function AddCourse() {
   };
   const handleDelete = () => {
     console.log(deleteId);
-    fetch(`http://localhost:4000/CoursesList/${deleteId}`, {
-      method: 'DELETE',
-    });
-    setDeleteModal(false);
-  };
-  const style = {
-    border: '1px solid var(--semi-color-border)',
-    backgroundColor: 'var(--semi-color-bg-2)',
-    borderRadius: '3px',
-    paddingLeft: '20px',
-    margin: '8px 2px',
+    http.delete(`/course/${deleteId}`).then(res => setDeleteModal(false));
+    location.reload();
   };
   return (
     <div>
       <Leave path={'/Login'} />
-      <Title heading={3} style={{ margin: '8px 0' }}>
-        请选择您的课程
-      </Title>
-      <Button onClick={addCourse}>+ 新建课程</Button>
+      <div className={styles.topTab}>
+        <Title heading={3} style={{ margin: '8px 0' }}>
+          请选择您的课程
+        </Title>
+        <Button className={styles.add} onClick={addCourse}>
+          + 新建课程
+        </Button>
+      </div>
       <Modal
         visible={visible}
         title="新建课程"
@@ -121,7 +105,10 @@ function AddCourse() {
         }}
         dataSource={courses}
         renderItem={item => (
-          <List.Item style={style}>
+          <List.Item
+            className={styles.courseList}
+            style={{ paddingLeft: '20px', paddingBottom: '10px' }}
+          >
             <div>
               <h3
                 style={{ color: 'var(--semi-color-text-0)', fontWeight: 500 }}
@@ -130,22 +117,27 @@ function AddCourse() {
                 {item.name}{' '}
               </h3>
               <Descriptions align="center" size="small" row />
-              <Button
-                onClick={() => {
-                  enterCourse(item.id);
-                }}
-              >
-                进入课程
-              </Button>
-              <IconDelete
-                onClick={() => {
-                  deleteCourse(item.id);
-                }}
-              />
+              <div className={styles.enterTab}>
+                <Button
+                  onClick={() => {
+                    enterCourse(item.id);
+                  }}
+                  className={styles.enter}
+                >
+                  进入课程
+                </Button>
+                <IconDelete
+                  className={styles.delete}
+                  onClick={() => {
+                    deleteCourse(item.id);
+                  }}
+                />
+              </div>
             </div>
           </List.Item>
         )}
       />
+      <img className={styles.logo} src="/backGroundLogo.png" alt="logo" />
     </div>
   );
 }

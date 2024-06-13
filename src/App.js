@@ -20,11 +20,11 @@ const App = () => {
       element: <Courses />,
     },
     {
-      path: 'CourseDetails/:courseId',
+      path: 'CourseDetails/:courseId/:classId',
       element: <CourseDetails />,
     },
     {
-      path: 'callRoll/:courseId',
+      path: 'callRoll/:courseId/:classId',
       element: <CallRoll />,
     },
   ]);

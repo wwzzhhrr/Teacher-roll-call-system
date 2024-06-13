@@ -1,27 +1,24 @@
-.Page{
-  /*padding: 180px 235px 180px 175px;*/
-  /*margin: 10vw 15vw;*/
-}
+
 .App{
   display: flex;
-  justify-content: space-between;
-  padding: 0 235px 0 175px;
+  justify-content: space-around;
   align-items: center;
-
 
 }
 .AppHeader{
   display: flex;
   flex-direction: column;
   padding: 80px 100px 123px 100px;
-  box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.10), 0px 0px 1px 0px rgba(0, 0, 0, 0.30);
   gap: 16px;
   transform: scale(0.75);
+  border-radius: 20px;
+  background: #F9F9F9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)
+
 }
 .firstPart{
   display: flex;
   margin-bottom: 32px;
-
 }
 .secondPart{
   display: flex;
@@ -46,4 +43,11 @@
 }
 .Divider{
   width: 440px;
+}
+.button{
+  height: 48px;
+  width: 244px;
+  border-radius: 20px;
+  /*background: rgba(var(--semi-grey-1), 0.15);*/
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

@@ -1,0 +1,113 @@
+.logo{
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    z-index: -999;
+}
+.inputList{
+    display: flex;
+    align-items: center;
+}
+.input{
+    margin-top: 4px;
+
+    display: flex;
+    justify-content: space-between;
+    width: 89vw;
+    gap: 50px;
+    align-items: center;
+}
+.inputAttendance{
+    border-radius: 8px;
+}
+.radio{
+    display: flex;
+    width: auto;
+    justify-content: space-between;
+    border-radius: 8px;
+}
+.radio > * {
+    width: 86px;
+}
+.courseList{
+    background-color: aquamarine;
+}
+.cardList{
+    padding-top: 45px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.cardText{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+.card{
+    justify-content: center;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 10px;
+    margin: 8px 2px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(3px);
+}
+.title{
+    display: flex;
+    gap: 36px;
+    align-items: center;
+}
+.cardList > :nth-child(1) {
+    background: rgba(255, 248, 234, 0.5);
+}
+.cardList > :nth-child(2) {
+    background: rgba(234, 245, 255, 0.5);
+}
+.cardList > :nth-child(3) {
+    background: rgba(236, 247, 236, 0.5);
+}
+.Icon{
+    width: 120px;
+    height: 120px;
+}
+.button{
+    border-radius: 999px;
+    display: flex;
+    padding: 0 20px;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 24px;
+}
+div.cardList > div.card:nth-child(1) .button {
+    background: #F58700;
+}
+div.cardList > div.card:nth-child(2) .button {
+    background: #30A7CE;
+}
+div.cardList > div.card:nth-child(3) .button {
+    background: #83B023;
+}
+.topTab{
+    display: flex;
+    justify-content: space-between;
+}
+.topButtons{
+    padding: 5px;
+    display: flex;
+    gap: 10px;
+}
+.topButton{
+    margin-top: 10px;
+    border-radius: 8px;
+    background: rgba(var(--semi-grey-1), 0.25);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1)
+}
+.buttonSide{
+    margin: 5px 10px 10px 10px;
+    border-radius: 8px;
+    background: rgba(var(--semi-grey-1), 0.25);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)
+
+}

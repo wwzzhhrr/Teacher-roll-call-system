@@ -3,9 +3,7 @@
     --semi-color-border: var(rgba(var(--semi-grey-9), .08));
 }
 .groupList{
-    display: flex;
-    width: 100%;
-    flex-direction: row;
+
 }
 .group{
     width: 200px;
@@ -18,7 +16,9 @@
     border-radius: 10px;
 }
 .cards{
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1)
+    background: rgba(var(--semi-grey-1), 0.15);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(3px);
 }
 .makeGroup{
     display: flex;
@@ -31,7 +31,83 @@ body{
 .Tabs{
 
 }
-.tabChild{
-    overflow-y: auto;
-    overflow-x: hidden;
+.studentsList{
+    border-radius: 10px;
+    margin: 10px 2px;
+    background: rgba(var(--semi-grey-1), 0.15);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(3px);
+    border: 0;
+}
+.studentsListNotCome{
+    border-radius: 10px;
+    margin: 10px 2px;
+    background: rgba(var(--semi-grey-4), 0.15);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(3px);
+    border: 0;
+}
+.button{
+    margin-top: 5px;
+    border-radius: 5px;
+    background: rgba(var(--semi-grey-1), 0.25);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1)
+}
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.topButtons{
+    display: flex;
+    gap: 10px;
+}
+
+.callButton{
+    justify-content: center;
+    border-radius: 10px;
+    margin: 10px 2px;
+    background: rgba(var(--semi-blue-5), 0.15);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(3px);
+    border: 0;
+    padding: 10px 108px;
+    font-size: 25px;
+}
+.logo{
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    z-index: -999;
+}
+
+.delete:hover{
+   color: rgba(var(--semi-red-5), 1);
+}
+.result{
+    padding: 0 0 30px 0;
+}
+.inputList{
+    display: flex;
+    align-items: center;
+}
+.input{
+    margin-top: 4px;
+    display: flex;
+    justify-content: space-between;
+    width: 89vw;
+    gap: 50px;
+    align-items: center;
+}
+.inputAttendance{
+    border-radius: 8px;
+}
+.radio{
+    display: flex;
+    width: auto;
+    justify-content: space-between;
+    border-radius: 8px;
+}
+.radio > * {
+    width: 86px;
 }

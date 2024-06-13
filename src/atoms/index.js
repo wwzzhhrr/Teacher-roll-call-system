@@ -11,7 +11,11 @@ export function LeaveIcon({ path }) {
   return (
     <>
       <IconArrowLeft
-        style={{ color: isActive ? '#0064f8' : '' }}
+        style={{
+          color: isActive ? '#0064f8' : '',
+          marginTop: '40px',
+          marginBottom: '10px',
+        }}
         onClick={() => {
           handleClick();
         }}

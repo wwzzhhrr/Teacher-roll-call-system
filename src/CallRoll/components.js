@@ -1,67 +1,121 @@
 import { Descriptions, InputNumber, List, Spin } from '@douyinfe/semi-ui';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { IconDelete } from '@douyinfe/semi-icons';
+import http from '../http';
+import { useParams } from 'react-router-dom';
+import styles from './index.module.css';
 
 export function Students({
-  students,
+  course,
+  classId,
+  studentBackEnd,
+  score,
   isGroup,
   changePointsButton,
-  course,
   isDelete,
 }) {
-  const style = {
-    border: '1px solid var(--semi-color-border)',
-    backgroundColor: 'var(--semi-color-bg-2)',
-    borderRadius: '3px',
-    paddingLeft: '20px',
-    margin: '8px 2px',
+  const deleteStudent = (id, name) => {
+    http.delete(`/student/${course}/students/${id}`);
+    console.log(`deleting ${name}`);
+    location.reload();
+  };
+  const setIsCome = (isCome, id) => {
+    http.post(`/student/is_come/${id}/${course}`, {
+      isCome: isCome ? 0 : 1,
+    });
+    location.reload();
   };
   return (
     <>
-      {Array.isArray(students) ? (
+      {Array.isArray(studentBackEnd) ? (
         <List
           grid={{
             gutter: 12,
-            xs: 0,
-            sm: 0,
-            md: 12,
-            lg: 8,
-            xl: 8,
-            xxl: 6,
+            xs: 24,
+            sm: 12,
+            md: 8,
+            lg: 6,
+            xl: 6,
+            xxl: 3,
           }}
-          dataSource={students}
+          dataSource={studentBackEnd}
           renderItem={item => (
-            <List.Item style={style}>
+            <List.Item
+              onClick={() => {
+                console.log(item.is_come);
+                if (!changePointsButton) {
+                  setIsCome(item.is_come, item.id);
+                }
+              }}
+              className={
+                item.is_come ? styles.studentsList : styles.studentsListNotCome
+              }
+              style={{
+                padding: '18px 0 10px 20px',
+              }}
+            >
               <div>
-                <h3
-                  style={{
-                    color: 'var(--semi-color-text-0)',
-                    fontWeight: 500,
-                  }}
-                >
-                  {!isGroup && item.isCall ? '😇' : ''}
-                  {item.name}
-                  {isDelete ? <IconDelete /> : ''}
-                </h3>
+                {item.is_come ? (
+                  <h2
+                    style={{
+                      color: 'var(--semi-color-text-0)',
+                      fontWeight: 500,
+                      margin: '0 0 5px',
+                    }}
+                  >
+                    {!isGroup && item.is_call ? '😇' : ''}
+                    {item.name}
+                    {isDelete ? (
+                      <IconDelete
+                        className={styles.delete}
+                        onClick={() => {
+                          deleteStudent(item.id, item.name);
+                        }}
+                      />
+                    ) : (
+                      ''
+                    )}
+                  </h2>
+                ) : (
+                  <h2
+                    style={{
+                      color: 'gray',
+                      fontWeight: 500,
+                      margin: '0 0 5px',
+                    }}
+                  >
+                    {item.name}
+                  </h2>
+                )}
                 {changePointsButton ? (
                   <InputNumber
-                    defaultValue={item.points}
+                    defaultValue={score[item.id] ? score[item.id] : 0}
                     onChange={num => {
-                      fetch(`http://localhost:4000/${course}/${item.id}`, {
-                        method: 'PATCH',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ points: num }), // 将 points 设置为一个数值
-                      });
+                      http
+                        .post(
+                          `/score/courses/${course}/classes/${classId}/students/${item.id}`,
+                          {
+                            score: num - (score[item.id] ? score[item.id] : 0),
+                          },
+                        )
+                        .then(response => {
+                          console.log('Response:', response.data);
+                        })
+                        .catch(error => {
+                          console.error('Error:', error);
+                        });
                     }}
                   />
                 ) : (
                   <Descriptions
                     align="center"
-                    size="small"
                     row
-                    data={[{ key: '分数', value: item.points }]}
+                    data={[
+                      {
+                        key: '分数',
+                        value: score[item.id] ? score[item.id] : 0,
+                      },
+                    ]}
                   />
                 )}
               </div>

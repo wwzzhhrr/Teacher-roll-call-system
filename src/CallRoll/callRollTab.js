@@ -1,110 +1,87 @@
 import React, { useEffect, useState } from 'react';
-import useSWR from 'swr';
-import axios from 'axios';
 import { Button, Modal } from '@douyinfe/semi-ui';
-import { upstateStudents } from './upstateStudents';
 import { Students } from './components';
 import http from '../http';
-import { useNavigate } from 'react-router-dom';
+import styles from './index.module.css';
 
-export function CallRollTab({ course, changePointsButton }) {
+export function CallRollTab({
+  course,
+  classId,
+  changePointsButton,
+  studentBackEnd,
+  score,
+}) {
   const [modalOpen, setModalOpen] = useState(false);
   const [randomStudent, setRandomStudent] = useState();
-  const [randomStudentPoints, setRandomStudentPoints] = useState();
   const [numStudentsChoose, setNumStudentsChoose] = useState();
-  const [studentBackEnd, setStudentBackEnd] = useState();
-  const { data: students, mutate } = useSWR(
-    `http://localhost:4000/${course}`,
-    url => axios.get(url).then(res => res.data),
-  );
-  async function getStudent() {
-    try {
-      const student = await http.get(
-        `http://localhost:5050/student/studentCourse/${course}`,
-      );
-      return student.data;
-    } catch (error) {
-      console.error('Error fetching student course:', error);
-      throw error;
-    }
-  }
-
-  useEffect(() => {
-    getStudent()
-      .then(student => {
-        setStudentBackEnd(student);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-  }, []);
-
   function callName() {
     let numStudents = studentBackEnd.length;
+    console.log(studentBackEnd);
     setModalOpen(true);
-    mutate().then(() => {
-      let randomNum = Math.floor(Math.random() * numStudents);
+    let randomNum = Math.floor(Math.random() * numStudents);
 
-      while (students[randomNum]['isCall']) {
-        randomNum = Math.floor(Math.random() * numStudents);
+    while (
+      studentBackEnd[randomNum].is_call ||
+      !studentBackEnd[randomNum].is_come
+    ) {
+      randomNum = Math.floor(Math.random() * numStudents);
+    }
+    http.get(`student/is_call/${randomNum + 1}/${course}`);
+    setNumStudentsChoose(randomNum);
+    setRandomStudent(studentBackEnd[randomNum]['name']);
+    console.log(randomNum);
+    let studentsNotCall = numStudents;
+    for (let i = 0; i < numStudents; i++) {
+      if (studentBackEnd[i].is_call || !studentBackEnd[i].is_come) {
+        studentsNotCall--;
       }
-      upstateStudents(`http://localhost:4000/${course}/${randomNum}`, {
-        isCall: true,
-      });
-      setNumStudentsChoose(randomNum);
-      setRandomStudent(students[randomNum]['name']);
-      setRandomStudentPoints(students[randomNum]['points']);
-      let studentsNotCall = numStudents;
-      for (let i = 0; i < numStudents; i++) {
-        if (students[i]['isCall']) {
-          studentsNotCall--;
-        }
-      }
-      if (studentsNotCall === 1) {
-        for (let j = 0; j < numStudents; j++) {
-          upstateStudents(`http://localhost:4000/${course}/${j}`, {
-            isCall: false,
-          });
-        }
-      }
-    });
+    }
+    if (studentsNotCall === 1) {
+      http.get(`/student/recall/${course}`, {});
+    }
   }
 
   function changePoints() {
     setModalOpen(false);
-    const selectedStudent = students[numStudentsChoose];
-    upstateStudents(`http://localhost:4000/${course}/${numStudentsChoose}`, {
-      points: selectedStudent.points + 1,
-    });
-    mutate();
+    console.log(numStudentsChoose);
+    http
+      .post(
+        `/score/courses/${course}/classes/${classId}/students/${numStudentsChoose + 1}`,
+        {
+          score:
+            (score[numStudentsChoose + 1] ? score[numStudentsChoose + 1] : 0) +
+            1,
+        },
+      )
+      .then(response => {
+        console.log('Response:', response.data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    location.reload();
   }
 
   function closeModal() {
     setModalOpen(false);
-    mutate();
+    location.reload();
   }
-
-  const style = {
-    border: '0',
-    backgroundColor: 'var(--semi-color-bg-2)',
-    borderRadius: '3px',
-    paddingLeft: '0',
-  };
   return (
     <>
       <Students
-        students={studentBackEnd}
+        studentBackEnd={studentBackEnd}
         isGroup={false}
         changePointsButton={changePointsButton}
         course={course}
         isDelete={false}
+        classId={classId}
+        score={score}
       />
       <Button
-        theme="solid"
-        type="primary"
-        style={{ marginRight: 8 }}
+        size="large"
         onClick={callName}
         disabled={changePointsButton}
+        className={styles.callButton}
       >
         随机点名
       </Button>
@@ -114,7 +91,7 @@ export function CallRollTab({ course, changePointsButton }) {
         footerFill={true}
         onOk={changePoints}
         onCancel={closeModal}
-        okText={'加分!'}
+        okText={'加一分!'}
         cancelText={'答错了'}
         maskClosable={false}
         closeOnEsc={true}
@@ -122,7 +99,6 @@ export function CallRollTab({ course, changePointsButton }) {
       >
         {randomStudent}
         <br />
-        当前分数：{randomStudentPoints}分
         {/*<InputNumber min={1} max={10} defaultValue={1} onchange={newValue=>{setChangeScoreValue(newValue)}}/>*/}
       </Modal>
     </>
